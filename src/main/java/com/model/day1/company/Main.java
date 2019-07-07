@@ -1,9 +1,7 @@
 package com.model.day1.company;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -449,19 +447,78 @@ public class Main {
                 intelKij
         ));
 
-        System.out.println(companies);
 
 // Polecenie 1:
 // Dane to Firmy oraz ich zakupy z miesiąca styczeń/luty 2018.
 
 // Wszystkie rozwiązania zapisz w oddzielnych metodach statycznych w klasie Main.
 // 1. Wylistuj (system out println) wszystkie firmy
+
+        System.out.println("Wszystkie firmy:");
+        companies.stream().
+                forEach(company -> System.out.print(company.getName() + ", "));
+        System.out.println();
 // 2. Wylistuj wszystkie firmy które są z Detroit
+        System.out.println("Firmy z Detroit:");
+        companies.stream()
+                .filter(company -> company.getCityHeadquarters().equalsIgnoreCase("Detroit"))
+                .forEach(company -> System.out.print(company.getName() + ", "));
+
 // 3. Wylistuj wszystkie firmy z Londynu, posortuj je po ilości pracowników (rosnąco).
+        System.out.println();
+        System.out.println("Firmy z Londynu, w ilości pracowników roznąco: ");
+
+        companies.stream()
+                .filter(c -> c.getCityHeadquarters().equalsIgnoreCase("London"))
+                .sorted(Comparator.comparingInt(Company::getEmployees))
+                .forEach(company -> System.out.print(company.getName() + " " + company.getEmployees() + ", "));
+
 // 4. Wylistuj wszystkie firmy z Warszawy. Posortuj je po ilości zakupów (rosnąco) i ilości pracowników (malejąco).
+        System.out.println();
+        System.out.println("Firmy z Warszafki[londyn]. Ilość zakupów (rosn), ilość pracowników (mal) ");
+
+        companies.stream()
+                .filter(c -> c.getCityHeadquarters().equalsIgnoreCase("London"))
+                .sorted(Comparator.comparingInt(c -> c.getPurchaseList().size()))
+                .forEach(c -> System.out.print("Firma:" + c.getName() + " ilość ZAKUPÓW:" + c.getPurchaseList().size() +
+                        " liczba PRACOWNIKÓW:" + c.getEmployees() + ", "));
+
+        System.out.println();
 // 5. Zwróć firmę z największą ilością pracowników, która pochodzi z Kijowa.
-// 6. Zwróć firmę z najkrótszą nazwą
+        System.out.println("Firma z Kijowa z największą liczbą pracowników:");
+
+        Company zKijevMaxPrac = companies
+                .stream()
+                .filter(c -> c.getCityHeadquarters().equalsIgnoreCase("Kijev"))
+                .min(Comparator.comparing(Company::getEmployees))
+                .orElseThrow(NoSuchElementException::new);
+
+        System.out.println("Firma z Kijova: " + zKijevMaxPrac.getName() + " z liczbą (max.) pracowników: " + zKijevMaxPrac.getEmployees());
+        System.out.println();
+
+// 6. Zwróć firmę z najkrótszą nazwą ###########JAK ____TO____DZIALA?___
+        System.out.println("Firma z najkrótszą nazwą:");
+        Company najkrotszaNazwa = companies
+                .stream()
+                .min(Comparator.comparing(c->c.getName().length()))
+                .get();
+
+        System.out.println("Najkrótsza nazwa: "+najkrotszaNazwa.getName() +", ilość zanków"+ najkrotszaNazwa.getName().length());
+
+
+        System.out.println();
 // 7. Zwróć firmę która nie pochodzi z Kijowa, Londynu i Detroit, która ma najmniej kupionych produktów.
+        Company nieKLDmaxZak = companies
+                .stream()
+                .filter((c->!c.getCityHeadquarters().equalsIgnoreCase("Kijev")))
+                .filter((c->!c.getCityHeadquarters().equalsIgnoreCase("London")))
+                .filter((c->!c.getCityHeadquarters().equalsIgnoreCase("Detroit")))
+                .min(Comparator.comparingInt(c->c.getPurchaseList().size()))
+                .get();
+
+        System.out.println(nieKLDmaxZak.getName()+": Nie z Kijowa&Lond&Detroit,czyli z: "+nieKLDmaxZak.getCityHeadquarters()+", max kupionych zakupów: "+nieKLDmaxZak.getPurchaseList().size());
+
+
 // 8. Każdej firmie dodaj po 1 pracowniku, jeśli pochodzi z Kijowa lub Detroit
 // 9. ** Zwróć MAPĘ w której kluczem jest nazwa firmy, a wartością ilość pracowników w tej firmie (https://howtodoinjava.com/java8/collect-stream-to-map/)
 // 10.** Zwróć Mapę w której kluczem jest miejscowość a wartością jest LISTA FIRM z tamtej miejscowości (Map<String, List<Company>) (https://stackoverflow.com/questions/24917053/collecting-hashmapstring-liststring-java-8)
@@ -496,5 +553,7 @@ public class Main {
 // 39. Wypisz jaki produkt poza paliwem cieszy się największą popularnością (zwróć go) (find first)
 // 40. Znajdź produkty które były kupowane zarówno w kilogramach jak i w sztukach
 // 40. Wymyśl 5 ciekawych zapytań i spróbuj je zrealizować. Najciekawsze polecenie otrzyma nagrodę-niespodziankę z Baltimore :P
+
+
     }
 }
